@@ -1,0 +1,41 @@
+# Local stack: gateway + Redis + Langfuse (+ its Postgres).
+# A mock LLM server gets added here as the gateway takes shape.
+
+services:
+  gateway:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - redis
+      - langfuse
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-db:5432/postgres
+      NEXTAUTH_SECRET: local-dev-secret
+      SALT: local-dev-salt
+      NEXTAUTH_URL: http://localhost:3000
+    depends_on:
+      - langfuse-db
+
+  langfuse-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - langfuse-db-data:/var/lib/postgresql/data
+
+volumes:
+  langfuse-db-data:
