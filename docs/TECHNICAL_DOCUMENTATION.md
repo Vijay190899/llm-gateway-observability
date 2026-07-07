@@ -1,10 +1,10 @@
-# LLM Gateway & Observability Platform — Technical Documentation
+# LLM Gateway and Observability Platform: Technical Documentation
 
 > **Living document.** This is the authoritative technical reference for the system. It **must** be updated in the same change set as any modification that alters the architecture, adds or removes a component, changes an interface or data contract, changes the caching/rate-limiting behavior, or changes the deployment topology. Record every such change in the [Revision history](#12-revision-history).
 
 | | |
 |---|---|
-| **Status** | Draft — pre-implementation |
+| **Status** | Draft, pre-implementation |
 | **Owner** | Vijay Ananth Karunanithi |
 | **Last updated** | 2026-07-07 |
 | **Version** | 0.1.0 |
@@ -72,10 +72,10 @@ flowchart LR
 
 ## 6. Interface contract
 
-- `POST /v1/chat/completions` — provider-compatible completion proxy.
-- `POST /v1/mcp/*` — MCP tool-call routing.
-- `GET /metrics` — cost/latency/cache-hit metrics.
-- `GET /health` — liveness/readiness.
+- `POST /v1/chat/completions`: provider-compatible completion proxy.
+- `POST /v1/mcp/*`: MCP tool-call routing.
+- `GET /metrics`: cost/latency/cache-hit metrics.
+- `GET /health`: liveness/readiness.
 - Contracts via Pydantic; breaking changes require a version bump and revision-history entry.
 
 ## 7. Evaluation and benchmarking
@@ -91,13 +91,13 @@ flowchart LR
 
 ## 9. Deployment and infrastructure
 
-- **Local:** Docker Compose — gateway + Redis + Langfuse (+ Postgres) + mock LLM server.
+- **Local:** Docker Compose (gateway, Redis, Langfuse, Postgres, mock LLM server).
 - **Cloud:** AWS **EKS**, deployed via a **Helm** chart, infrastructure provisioned with **Terraform**.
-- **CI/CD:** GitHub Actions — build image, lint, test, deploy.
+- **CI/CD:** GitHub Actions to build image, lint, test, and deploy.
 
 ## 10. Observability
 
-- **Langfuse** — every call traced; dashboards for cost and latency by team and model.
+- **Langfuse** traces every call, with dashboards for cost and latency by team and model.
 - Alert thresholds documented alongside dashboards.
 
 ## 11. Build roadmap
