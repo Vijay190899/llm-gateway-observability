@@ -19,11 +19,30 @@
   position: fixed;
   inset: 0;
   z-index: 50;
+  overflow: hidden;
   display: grid;
   place-items: center;
   background: radial-gradient(120% 120% at 50% 40%, oklch(15% 0.025 235), oklch(9% 0.02 240));
 }
+.loader__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+/* Vignette so the boot text stays legible over the streaks. */
+.loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(60% 55% at 50% 45%, transparent, oklch(9% 0.02 240 / 0.72));
+}
 .loader__inner {
+  position: relative;
+  z-index: 2;
   width: min(560px, 88vw);
   padding: 0 var(--sp-3);
 }

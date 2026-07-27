@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
+import { LoaderBackdrop } from "./LoaderBackdrop";
 
 /**
- * Branded intro / loading screen. Boot-sequence lines type in, a progress bar
- * fills, then the whole overlay lifts away (AnimatePresence in App). Sets the
- * editorial tone before the dashboard resolves.
+ * Branded intro / loading screen. A flow-field particle animation drifts behind
+ * boot-sequence lines that type in while a progress bar fills, then the whole
+ * overlay lifts away (AnimatePresence in App). Sets the editorial tone before
+ * the dashboard resolves.
  */
 const STEPS = [
   "initializing gateway",
@@ -20,6 +22,7 @@ export function Loader() {
       exit={{ opacity: 0, filter: "blur(12px)" }}
       transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}
     >
+      <LoaderBackdrop />
       <div className="loader__inner">
         <motion.div
           className="loader__kicker mono"
