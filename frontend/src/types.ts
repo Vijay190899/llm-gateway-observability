@@ -7,6 +7,7 @@ export interface Totals {
   saved_usd: number;
   tokens: number;
   avg_latency_ms: number;
+  p95_latency_ms: number;
 }
 
 export interface ModelRow {
@@ -35,11 +36,38 @@ export interface RequestEvent {
   findings: string[];
 }
 
+export interface SeriesPoint {
+  t: number;
+  requests: number;
+  hits: number;
+  misses: number;
+  cost_usd: number;
+  tokens: number;
+  avg_latency_ms: number;
+  p95_latency_ms: number;
+}
+
+export interface HistogramBin {
+  lo: number;
+  label: string;
+  count: number;
+}
+
+export interface FindingRow {
+  code: string;
+  label: string;
+  count: number;
+}
+
 export interface MetricsSummary {
   generated_at: number;
+  window_seconds: number;
   totals: Totals;
+  series: SeriesPoint[];
   by_model: ModelRow[];
   by_team: TeamRow[];
+  latency_histogram: HistogramBin[];
+  findings: FindingRow[];
   recent: RequestEvent[];
 }
 

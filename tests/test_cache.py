@@ -52,7 +52,7 @@ async def test_lookup_scales_over_many_entries():
     hit = await cache.lookup(backend, target, threshold=0.95)
     assert hit is not None and hit.response == {"hit": True}
 
-    # The query's buckets hold far fewer entries than the full cache — that
+    # The query's buckets hold far fewer entries than the full cache; that
     # smaller set is all a lookup ever compares against.
     probed = set()
     for bkey in lsh.bucket_keys(embeddings.embed(target)):

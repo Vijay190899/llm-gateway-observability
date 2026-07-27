@@ -1,10 +1,14 @@
 import type { ChatResponse, MetricsSummary } from "./types";
 
-// Relative paths — proxied to the gateway by Vite (dev) or nginx (container).
-export async function getMetrics(): Promise<MetricsSummary> {
-  const r = await fetch("/metrics");
+// Relative paths, proxied to the gateway by Vite (dev) or nginx (container).
+export async function getMetrics(windowSeconds: number): Promise<MetricsSummary> {
+  const r = await fetch(`/metrics?window=${windowSeconds}`);
   if (!r.ok) throw new Error(`metrics ${r.status}`);
   return r.json();
+}
+
+export async function seedDemo(hours = 24, count = 2000): Promise<void> {
+  await fetch(`/internal/seed?hours=${hours}&count=${count}`, { method: "POST" }).catch(() => {});
 }
 
 export async function getHealth(): Promise<{ status: string; backend: string; tracing: boolean }> {

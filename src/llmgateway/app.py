@@ -247,5 +247,20 @@ async def mcp_tools():
 
 
 @app.get("/metrics")
-async def get_metrics(request: Request):
-    return await metrics.summary(request.app.state.backend)
+async def get_metrics(request: Request, window: int = 3600):
+    # window is a look-back in seconds (30m .. 24h from the dashboard).
+    window = max(60, min(window, 86400))
+    return await metrics.summary(request.app.state.backend, window)
+
+
+@app.post("/internal/seed")
+async def seed(request: Request, hours: int = 24, count: int = 1500):
+    """Demo utility: backfill synthetic history so the time filters and
+    time-series charts have something to show. Disabled in production."""
+    settings = request.app.state.settings
+    if settings.environment == "production":
+        raise HTTPException(status_code=403, detail={"error": "seeding disabled in production"})
+    hours = max(1, min(hours, 24))
+    count = max(1, min(count, 8000))
+    n = await metrics.seed_synthetic(request.app.state.backend, hours, count)
+    return {"seeded": n, "hours": hours}

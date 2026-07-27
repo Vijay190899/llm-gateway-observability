@@ -1,3 +1,8 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
+@import "@fontsource-variable/jetbrains-mono";
+
 *,
 *::before,
 *::after {
@@ -17,19 +22,51 @@ body {
   line-height: 1.55;
   color: var(--text);
   background: var(--bg);
-  background-image: var(--bg-grad);
-  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* WebGL fluid backdrop sits behind everything; app content rides above it. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  display: block;
+}
+
+/* Fine grain overlay to kill flatness and any gradient banding. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
 }
 
 h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.12;
+  line-height: 1.08;
   letter-spacing: -0.02em;
-  font-weight: 640;
+  font-weight: 600;
+}
+
+.serif {
+  font-family: var(--font-serif);
+  font-weight: 460;
+  letter-spacing: -0.015em;
+  font-optical-sizing: auto;
+}
+.serif em {
+  font-style: italic;
+  font-weight: 460;
 }
 
 button {
@@ -50,6 +87,15 @@ button {
 .mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Uppercase, wide-tracked micro-label: the editorial signature. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
 }
 
 .glass {

@@ -1,6 +1,6 @@
 """Locality-sensitive hashing for the semantic cache.
 
-A linear scan over every cached embedding does not scale — cost grows with the
+A linear scan over every cached embedding does not scale; cost grows with the
 cache size on every request. LSH makes lookup sub-linear: each embedding gets a
 short binary signature per hash table (sign of its projection onto random
 hyperplanes), and near-duplicate vectors land in the same bucket with high

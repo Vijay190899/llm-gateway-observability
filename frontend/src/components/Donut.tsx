@@ -18,7 +18,7 @@ export function Donut({ rate, hits, total }: { rate: number; hits: number; total
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--cache)"
+          stroke="var(--chart-b)"
           strokeWidth={stroke}
           strokeLinecap="round"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
@@ -26,7 +26,7 @@ export function Donut({ rate, hits, total }: { rate: number; hits: number; total
           initial={{ strokeDashoffset: c }}
           animate={{ strokeDashoffset: c - dash }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          style={{ filter: "drop-shadow(0 0 8px color-mix(in oklch, var(--cache) 50%, transparent))" }}
+          style={{ filter: "drop-shadow(0 0 8px color-mix(in oklch, var(--chart-b) 50%, transparent))" }}
         />
       </svg>
       <div className="donut__center">

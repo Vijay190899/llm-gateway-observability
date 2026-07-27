@@ -1,22 +1,26 @@
-/* Design tokens — OKLCH color, fluid type, spacing, elevation, motion.
+/* Design tokens: OKLCH color, fluid type, spacing, elevation, motion.
    Dark-first; a light theme is provided under [data-theme="light"]. */
 
 :root {
-  /* Accents (stable across themes) */
-  --accent: oklch(64% 0.19 285); /* violet */
-  --accent-strong: oklch(70% 0.2 285);
-  --accent-soft: oklch(64% 0.19 285 / 0.14);
-  --cache: oklch(74% 0.15 165); /* teal — cache / savings */
-  --warn: oklch(80% 0.14 80); /* amber — rate limit */
-  --danger: oklch(66% 0.2 22); /* red — blocked */
-  --info: oklch(72% 0.13 230); /* blue — latency */
+  /* Accents (stable across themes): cyan/teal system, no violet */
+  --accent: oklch(72% 0.12 205); /* cyan */
+  --accent-strong: oklch(78% 0.13 200);
+  --accent-soft: oklch(72% 0.12 205 / 0.14);
+  --cache: oklch(74% 0.14 165); /* emerald: cache / savings */
+  --warn: oklch(80% 0.13 80); /* amber: rate limit */
+  --danger: oklch(66% 0.19 22); /* coral: blocked */
+  --info: oklch(70% 0.12 235); /* sky blue: latency */
 
-  /* Chart series */
-  --c1: var(--accent);
-  --c2: var(--cache);
-  --c3: var(--info);
-  --c4: var(--warn);
-  --c5: oklch(70% 0.17 330);
+  /* Plot colours: red + yellow, warm and legible on the dark backdrop */
+  --chart-a: oklch(66% 0.2 25); /* red */
+  --chart-b: oklch(84% 0.14 90); /* yellow */
+
+  /* Chart series (categorical) */
+  --c1: var(--chart-a);
+  --c2: var(--chart-b);
+  --c3: oklch(74% 0.15 55); /* orange */
+  --c4: oklch(80% 0.11 110); /* gold-green */
+  --c5: oklch(70% 0.17 30); /* deep coral */
 
   /* Fluid type */
   --fs-xs: clamp(0.72rem, 0.69rem + 0.15vw, 0.8rem);
@@ -43,62 +47,56 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
 
-  --font-sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo,
-    Consolas, monospace;
+  --font-sans: "Inter Variable", ui-sans-serif, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, system-ui, sans-serif;
+  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", "Cascadia Code",
+    Menlo, Consolas, monospace;
+
+  --fs-3xl: clamp(2.6rem, 1.9rem + 3.4vw, 5rem);
 }
 
-/* Dark (default) */
+/* Dark (default): smoked-glass panels over the WebGL backdrop.
+   Neutral hue sits at 240 (cool blue-grey), never in the violet range. */
 :root,
 :root[data-theme="dark"] {
-  --bg: oklch(17% 0.015 275);
-  --bg-grad: radial-gradient(
-      1200px 700px at 85% -10%,
-      oklch(30% 0.08 285 / 0.5),
-      transparent 60%
-    ),
-    radial-gradient(900px 600px at -5% 10%, oklch(28% 0.06 200 / 0.35), transparent 55%);
-  --surface: oklch(100% 0 0 / 0.045);
-  --surface-2: oklch(100% 0 0 / 0.07);
-  --border: oklch(100% 0 0 / 0.1);
-  --border-strong: oklch(100% 0 0 / 0.18);
-  --text: oklch(97% 0.01 275);
-  --text-muted: oklch(72% 0.02 275);
-  --text-faint: oklch(58% 0.02 275);
-  --shadow: 0 20px 50px -20px oklch(0% 0 0 / 0.6);
-  --glass-blur: blur(14px) saturate(150%);
+  --bg: oklch(13% 0.015 240);
+  --surface: oklch(16% 0.018 240 / 0.55);
+  --surface-2: oklch(20% 0.02 240 / 0.7);
+  --border: oklch(100% 0 0 / 0.09);
+  --border-strong: oklch(100% 0 0 / 0.2);
+  --text: oklch(97% 0.008 240);
+  --text-muted: oklch(74% 0.015 240);
+  --text-faint: oklch(60% 0.015 240);
+  --accent-text: oklch(82% 0.13 195); /* readable accent on dark */
+  --shadow: 0 24px 60px -24px oklch(0% 0 0 / 0.7);
+  --glass-blur: blur(18px) saturate(140%);
 }
 
 /* Light */
 :root[data-theme="light"] {
-  --bg: oklch(97.5% 0.008 265);
-  --bg-grad: radial-gradient(
-      1200px 700px at 85% -10%,
-      oklch(80% 0.09 285 / 0.35),
-      transparent 60%
-    ),
-    radial-gradient(900px 600px at -5% 10%, oklch(85% 0.07 200 / 0.35), transparent 55%);
+  --bg: oklch(97.5% 0.008 240);
   --surface: oklch(100% 0 0 / 0.72);
   --surface-2: oklch(100% 0 0 / 0.9);
-  --border: oklch(20% 0.02 275 / 0.1);
-  --border-strong: oklch(20% 0.02 275 / 0.16);
-  --text: oklch(25% 0.02 275);
-  --text-muted: oklch(45% 0.02 275);
-  --text-faint: oklch(58% 0.02 275);
-  --shadow: 0 20px 45px -24px oklch(40% 0.05 275 / 0.45);
+  --border: oklch(20% 0.02 240 / 0.1);
+  --border-strong: oklch(20% 0.02 240 / 0.16);
+  --text: oklch(25% 0.02 240);
+  --text-muted: oklch(45% 0.02 240);
+  --text-faint: oklch(58% 0.02 240);
+  --accent-text: oklch(48% 0.13 205); /* deeper teal, readable on light */
+  --shadow: 0 20px 45px -24px oklch(40% 0.05 240 / 0.45);
   --glass-blur: blur(14px) saturate(160%);
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: oklch(97.5% 0.008 265);
+    --bg: oklch(97.5% 0.008 240);
     --surface: oklch(100% 0 0 / 0.72);
     --surface-2: oklch(100% 0 0 / 0.9);
-    --border: oklch(20% 0.02 275 / 0.1);
-    --border-strong: oklch(20% 0.02 275 / 0.16);
-    --text: oklch(25% 0.02 275);
-    --text-muted: oklch(45% 0.02 275);
-    --text-faint: oklch(58% 0.02 275);
+    --border: oklch(20% 0.02 240 / 0.1);
+    --border-strong: oklch(20% 0.02 240 / 0.16);
+    --text: oklch(25% 0.02 240);
+    --text-muted: oklch(45% 0.02 240);
+    --text-faint: oklch(58% 0.02 240);
   }
 }

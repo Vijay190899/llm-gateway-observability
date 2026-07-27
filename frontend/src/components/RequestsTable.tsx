@@ -28,7 +28,7 @@ export function RequestsTable({ rows }: { rows: RequestEvent[] }) {
             <span className="feed__model mono">{ev.model}</span>
             <span className="feed__team">{ev.team}</span>
             <span className="feed__lat mono">{ms(ev.latency_ms)}</span>
-            <span className="feed__cost mono">{ev.cache_hit ? "—" : usd(ev.cost_usd)}</span>
+            <span className="feed__cost mono">{ev.cache_hit ? "$0.00" : usd(ev.cost_usd)}</span>
             <span className="feed__findings">
               {ev.findings.slice(0, 2).map((f) => (
                 <span className="chip" key={f}>

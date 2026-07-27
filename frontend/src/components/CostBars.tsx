@@ -33,5 +33,5 @@ export function CostBars({ rows }: { rows: ModelRow[] }) {
 }
 
 function Empty() {
-  return <div className="empty">No traffic yet — send a request from the Playground.</div>;
+  return <div className="empty">No traffic yet. Send a request from the Playground.</div>;
 }

@@ -1,4 +1,4 @@
-"""Semantic cache — scalable by design.
+"""Semantic cache, scalable by design.
 
 Exact-match caching barely hits on natural-language prompts, so we key on
 embedding cosine similarity. To stay fast as the cache grows, lookup does not
@@ -57,7 +57,7 @@ async def lookup(backend: Backend, prompt: str, threshold: float) -> CacheHit | 
     for entry_key, bkey in candidates:
         raw = await backend.get(entry_key)
         if not raw:
-            # Entry expired but its bucket membership lingers — clean it up.
+            # Entry expired but its bucket membership lingers; clean it up.
             await backend.srem(bkey, entry_key)
             continue
         entry = json.loads(raw)

@@ -38,7 +38,7 @@ TEAMS = ["checkout", "search", "support"]
 
 def next_prompt(rng: random.Random, i: int) -> str:
     # Half the traffic is a recurring hot prompt; the other half is unique
-    # (a novel user question) which the cache cannot hit — a believable mix.
+    # (a novel user question) which the cache cannot hit, a believable mix.
     if rng.random() < 0.5:
         return rng.choice(HOT)
     return f"Explain concept #{i}-{rng.randint(1000, 9999)} for our internal wiki in detail."
