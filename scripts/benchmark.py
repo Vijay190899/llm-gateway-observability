@@ -45,7 +45,7 @@ def next_prompt(rng: random.Random, i: int) -> str:
 
 
 async def worker(client, url, jobs, results, errors):
-    for i, content, model, team in jobs:
+    for _i, content, model, team in jobs:
         try:
             r = await client.post(
                 f"{url}/v1/chat/completions",
@@ -62,9 +62,7 @@ async def worker(client, url, jobs, results, errors):
 
 async def run(url: str, n: int, concurrency: int, seed: int) -> None:
     rng = random.Random(seed)
-    all_jobs = [
-        (i, next_prompt(rng, i), rng.choice(MODELS), rng.choice(TEAMS)) for i in range(n)
-    ]
+    all_jobs = [(i, next_prompt(rng, i), rng.choice(MODELS), rng.choice(TEAMS)) for i in range(n)]
     # Partition round-robin across workers.
     buckets: list[list] = [[] for _ in range(concurrency)]
     for j, job in enumerate(all_jobs):
@@ -81,7 +79,8 @@ async def run(url: str, n: int, concurrency: int, seed: int) -> None:
     wall = time.perf_counter() - t0
 
     if not results:
-        print(f"No successful requests. errors={errors[:5]} (raise RATE_LIMIT_PER_MINUTE for load tests)")
+        print(f"No successful requests. errors={errors[:5]}")
+        print("(raise RATE_LIMIT_PER_MINUTE on the gateway for load tests)")
         return
 
     lat_hit = [g["latency_ms"] for g in results if g["cache_hit"]]

@@ -26,4 +26,6 @@ async def check(backend: Backend, team: str, limit_per_minute: int) -> RateDecis
     if count == 1:
         await backend.expire(key, 60)
     remaining = max(0, limit_per_minute - count)
-    return RateDecision(allowed=count <= limit_per_minute, remaining=remaining, limit=limit_per_minute)
+    return RateDecision(
+        allowed=count <= limit_per_minute, remaining=remaining, limit=limit_per_minute
+    )

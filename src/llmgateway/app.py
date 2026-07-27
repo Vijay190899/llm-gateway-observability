@@ -92,12 +92,21 @@ async def chat_completions(
         await metrics.record(
             backend,
             metrics.RequestEvent(
-                ts=time.time(), team=x_team, model=body.model,
-                prompt_tokens=0, completion_tokens=0, cost_usd=0.0,
-                latency_ms=latency_ms, cache_hit=False, blocked=True, findings=in_findings,
+                ts=time.time(),
+                team=x_team,
+                model=body.model,
+                prompt_tokens=0,
+                completion_tokens=0,
+                cost_usd=0.0,
+                latency_ms=latency_ms,
+                cache_hit=False,
+                blocked=True,
+                findings=in_findings,
             ),
         )
-        raise HTTPException(status_code=400, detail={"error": "blocked_by_guardrails", "findings": in_findings})
+        raise HTTPException(
+            status_code=400, detail={"error": "blocked_by_guardrails", "findings": in_findings}
+        )
 
     # 2. Rate limit (per team).
     decision = await rl.check(backend, x_team, settings.rate_limit_per_minute)
@@ -123,11 +132,17 @@ async def chat_completions(
         await metrics.record(
             backend,
             metrics.RequestEvent(
-                ts=time.time(), team=x_team, model=body.model,
+                ts=time.time(),
+                team=x_team,
+                model=body.model,
                 prompt_tokens=response.usage.prompt_tokens,
                 completion_tokens=response.usage.completion_tokens,
-                cost_usd=0.0, latency_ms=latency_ms, cache_hit=True, blocked=False,
-                saved_usd=hit.original_cost_usd, findings=in_findings,
+                cost_usd=0.0,
+                latency_ms=latency_ms,
+                cache_hit=True,
+                blocked=False,
+                saved_usd=hit.original_cost_usd,
+                findings=in_findings,
             ),
         )
         return response
@@ -166,22 +181,34 @@ async def chat_completions(
     )
 
     # 6. Store in cache for next time (keyed on the original prompt).
-    await cache.store(backend, prompt, response.model_dump(), body.model, cost, settings.cache_ttl_seconds)
+    await cache.store(
+        backend, prompt, response.model_dump(), body.model, cost, settings.cache_ttl_seconds
+    )
 
     # 7. Metrics + trace.
     await metrics.record(
         backend,
         metrics.RequestEvent(
-            ts=time.time(), team=x_team, model=body.model,
+            ts=time.time(),
+            team=x_team,
+            model=body.model,
             prompt_tokens=completion.prompt_tokens,
             completion_tokens=completion.completion_tokens,
-            cost_usd=cost, latency_ms=latency_ms, cache_hit=False, blocked=False,
+            cost_usd=cost,
+            latency_ms=latency_ms,
+            cache_hit=False,
+            blocked=False,
             findings=in_findings + out_findings,
         ),
     )
     tracer.trace_completion(
-        model=body.model, team=x_team, prompt=safe_prompt, output=safe_output,
-        cost_usd=cost, latency_ms=latency_ms, cache_hit=False,
+        model=body.model,
+        team=x_team,
+        prompt=safe_prompt,
+        output=safe_output,
+        cost_usd=cost,
+        latency_ms=latency_ms,
+        cache_hit=False,
     )
     if tracer.should_judge():
         response.gateway.guardrails.output_findings.append(
@@ -203,11 +230,15 @@ async def mcp_call(body: MCPToolCall, request: Request, x_team: str = Header(def
         result = mcp.call_tool(body.tool, body.arguments)
         error = None
     except KeyError:
-        raise HTTPException(status_code=404, detail={"error": "unknown_tool", "tools": mcp.available_tools()})
+        raise HTTPException(
+            status_code=404, detail={"error": "unknown_tool", "tools": mcp.available_tools()}
+        ) from None
     except Exception as exc:  # noqa: BLE001 - surface tool errors to caller
         result, error = None, str(exc)
     latency_ms = (time.perf_counter() - started) * 1000
-    return MCPToolResult(tool=body.tool, result=result, latency_ms=round(latency_ms, 2), error=error)
+    return MCPToolResult(
+        tool=body.tool, result=result, latency_ms=round(latency_ms, 2), error=error
+    )
 
 
 @app.get("/v1/mcp/tools")

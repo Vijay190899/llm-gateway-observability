@@ -79,13 +79,21 @@ async def summary(backend: Backend) -> dict:
     for model in models:
         m = await backend.hgetall(_BY_MODEL + model)
         by_model.append(
-            {"model": model, "requests": int(_num(m, "requests")), "cost_usd": round(_num(m, "cost_usd"), 6)}
+            {
+                "model": model,
+                "requests": int(_num(m, "requests")),
+                "cost_usd": round(_num(m, "cost_usd"), 6),
+            }
         )
     by_team = []
     for team in teams:
         t = await backend.hgetall(_BY_TEAM + team)
         by_team.append(
-            {"team": team, "requests": int(_num(t, "requests")), "cost_usd": round(_num(t, "cost_usd"), 4)}
+            {
+                "team": team,
+                "requests": int(_num(t, "requests")),
+                "cost_usd": round(_num(t, "cost_usd"), 4),
+            }
         )
 
     return {
@@ -98,7 +106,9 @@ async def summary(backend: Backend) -> dict:
             "cost_usd": round(_num(totals, "cost_usd"), 6),
             "saved_usd": round(_num(totals, "saved_usd"), 6),
             "tokens": int(_num(totals, "tokens")),
-            "avg_latency_ms": round(_num(totals, "latency_ms_sum") / requests, 1) if requests else 0.0,
+            "avg_latency_ms": round(_num(totals, "latency_ms_sum") / requests, 1)
+            if requests
+            else 0.0,
         },
         "by_model": sorted(by_model, key=lambda x: -x["cost_usd"]),
         "by_team": sorted(by_team, key=lambda x: -x["cost_usd"]),

@@ -33,16 +33,22 @@ class Tracer:
     def enabled(self) -> bool:
         return self._client is not None
 
-    def trace_completion(self, *, model, team, prompt, output, cost_usd, latency_ms, cache_hit) -> None:
+    def trace_completion(
+        self, *, model, team, prompt, output, cost_usd, latency_ms, cache_hit
+    ) -> None:
         if not self._client:
             return
         try:
-            trace = self._client.trace(name="chat.completion", user_id=team, metadata={
-                "model": model,
-                "cost_usd": cost_usd,
-                "latency_ms": latency_ms,
-                "cache_hit": cache_hit,
-            })
+            trace = self._client.trace(
+                name="chat.completion",
+                user_id=team,
+                metadata={
+                    "model": model,
+                    "cost_usd": cost_usd,
+                    "latency_ms": latency_ms,
+                    "cache_hit": cache_hit,
+                },
+            )
             trace.generation(name="completion", model=model, input=prompt, output=output)
         except Exception:
             pass

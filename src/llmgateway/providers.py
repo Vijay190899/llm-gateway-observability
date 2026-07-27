@@ -127,7 +127,9 @@ class Router:
         )
         self._mock = MockProvider()
         self._openai = (
-            OpenAIProvider(settings.openai_api_key, self._client) if settings.openai_api_key else None
+            OpenAIProvider(settings.openai_api_key, self._client)
+            if settings.openai_api_key
+            else None
         )
         self._anthropic = (
             AnthropicProvider(settings.anthropic_api_key, self._client)

@@ -16,12 +16,23 @@ from dataclasses import dataclass, field
 
 # --- Prompt injection -------------------------------------------------------
 _INJECTION_PATTERNS: list[tuple[str, re.Pattern]] = [
-    ("override-instructions", re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions", re.I)),
+    (
+        "override-instructions",
+        re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions", re.I),
+    ),
     ("disregard", re.compile(r"disregard\s+(the\s+)?(system|previous|above)", re.I)),
-    ("reveal-system-prompt", re.compile(r"(reveal|show|print|repeat)\s+(your|the)\s+system\s+prompt", re.I)),
+    (
+        "reveal-system-prompt",
+        re.compile(r"(reveal|show|print|repeat)\s+(your|the)\s+system\s+prompt", re.I),
+    ),
     ("role-override", re.compile(r"you\s+are\s+now\s+(a|an|the)\b", re.I)),
     ("jailbreak-persona", re.compile(r"\b(DAN|developer\s+mode|do\s+anything\s+now)\b", re.I)),
-    ("exfiltrate", re.compile(r"(send|post|exfiltrate|leak)\s+.*\b(api[_\s-]?key|secret|token|password)", re.I)),
+    (
+        "exfiltrate",
+        re.compile(
+            r"(send|post|exfiltrate|leak)\s+.*\b(api[_\s-]?key|secret|token|password)", re.I
+        ),
+    ),
 ]
 
 # --- PII --------------------------------------------------------------------

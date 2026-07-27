@@ -41,7 +41,13 @@ async def test_lookup_scales_over_many_entries():
     target = "how does the semantic cache index scale under load"
     await cache.store(backend, target, {"hit": True}, "mock-gpt", 0.02)
     for i in range(3000):
-        await cache.store(backend, f"unrelated filler prompt number {i} about topic {i}", {"i": i}, "mock-gpt", 0.0)
+        await cache.store(
+            backend,
+            f"unrelated filler prompt number {i} about topic {i}",
+            {"i": i},
+            "mock-gpt",
+            0.0,
+        )
 
     hit = await cache.lookup(backend, target, threshold=0.95)
     assert hit is not None and hit.response == {"hit": True}

@@ -19,7 +19,7 @@ _WORD = re.compile(r"[a-z0-9]+")
 
 def _tokens(text: str) -> list[str]:
     words = _WORD.findall(text.lower())
-    bigrams = [f"{a}_{b}" for a, b in zip(words, words[1:])]
+    bigrams = [f"{a}_{b}" for a, b in zip(words, words[1:], strict=False)]
     return words + bigrams
 
 
@@ -43,4 +43,4 @@ def embed(text: str) -> list[float]:
 
 
 def cosine(a: list[float], b: list[float]) -> float:
-    return sum(x * y for x, y in zip(a, b))
+    return sum(x * y for x, y in zip(a, b, strict=False))

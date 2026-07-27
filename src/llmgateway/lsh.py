@@ -36,7 +36,7 @@ def signatures(vec: list[float]) -> list[int]:
     for planes in _PLANES:
         bits = 0
         for j, plane in enumerate(planes):
-            if sum(v * p for v, p in zip(vec, plane)) > 0.0:
+            if sum(v * p for v, p in zip(vec, plane, strict=False)) > 0.0:
                 bits |= 1 << j
         sigs.append(bits)
     return sigs
