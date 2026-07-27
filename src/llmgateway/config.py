@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     # Redis / cache
     redis_url: str = "redis://localhost:6379/0"
     cache_similarity_threshold: float = 0.95
+    cache_ttl_seconds: int = 3600
 
     # Langfuse
     langfuse_public_key: str = ""
@@ -21,6 +22,12 @@ class Settings(BaseSettings):
 
     # Rate limiting
     rate_limit_per_minute: int = 60
+
+    # Guardrails
+    block_on_injection: bool = True
+
+    # CORS origins for the dashboard (comma-separated, or "*")
+    cors_origins: str = "*"
 
     # App
     log_level: str = "INFO"

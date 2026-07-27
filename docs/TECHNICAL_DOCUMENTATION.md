@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Status** | Draft, pre-implementation |
+| **Status** | Core implemented (proxy, cache, guardrails, rate limit, metrics, MCP, dashboard) |
 | **Owner** | Vijay Ananth Karunanithi |
-| **Last updated** | 2026-07-07 |
-| **Version** | 0.1.0 |
+| **Last updated** | 2026-07-27 |
+| **Version** | 0.2.0 |
 
 ---
 
@@ -54,6 +54,9 @@ flowchart LR
 ### 4.2 Semantic cache
 - Incoming prompts are embedded; if cosine similarity to a cached entry exceeds `cache_similarity_threshold` (default 0.95), the cached response is served.
 - Backed by **Redis**. Rationale: exact-match caching rarely hits on natural-language prompts; similarity-based caching is where meaningful savings arise.
+- **Scales sub-linearly.** Lookup does not scan the whole cache: an LSH index (random-hyperplane signatures across L independent hash tables, `lsh.py`) narrows the comparison to the candidates sharing the query's buckets. Lookup cost tracks the number of near-duplicates, not total cache size. See [ADR-0004](adr/0004-scaling-the-semantic-cache-and-gateway.md).
+- **TTL eviction** (`cache_ttl_seconds`, default 3600) keeps memory bounded with no background sweep; stale bucket membership is pruned lazily on probe.
+- The embedding function is pluggable (`embeddings.py`); the default is a dependency-free local feature-hashing embedding so the cache runs offline. See [ADR-0003](adr/0003-pluggable-local-embedding-and-mock-provider.md).
 
 ### 4.3 Rate limiter
 - Per-key request budgets (`rate_limit_per_minute`), counters in Redis.
@@ -62,7 +65,16 @@ flowchart LR
 - Inline on request and response: prompt-injection detection, PII/output filtering, and an OWASP-LLM-Top-10 checklist. Applied centrally so every team inherits it.
 
 ### 4.5 MCP routing
-- The gateway can proxy and route MCP tool calls, allowing it to front an agent fleet rather than only completion endpoints.
+- The gateway can proxy and route MCP tool calls, allowing it to front an agent fleet rather than only completion endpoints. `POST /v1/mcp/call` routes to a tool registry (`mcp.py`) through the same rate-limit and metrics path; `GET /v1/mcp/tools` lists available tools.
+
+### 4.6 Dashboard
+- A React/Vite single-page dashboard (`frontend/`) reads `GET /metrics` for live cost/latency/cache/guardrail observability and provides a Playground that exercises the full request path (cache, guardrails, cost, latency reported inline). Served by nginx in the container, which also reverse-proxies the gateway API on the same origin (no CORS).
+
+### 4.7 Scalability
+- **Stateless gateway.** All request state (cache, rate-limit counters, metrics) lives in the backend, never in process memory — so the gateway scales horizontally: N uvicorn workers / N replicas behind a load balancer share one Redis and stay consistent. The in-memory backend is a single-process dev fallback, reported at `/health`.
+- **Pooled upstream connections** via one shared `httpx.AsyncClient` (keep-alive), so load does not pay a handshake per request.
+- **Atomic rate limiting** via Redis `INCR`, correct across replicas.
+- Verified under load: 5,000 concurrent requests, 0 errors, cache hits ~2 ms with thousands of live entries. Benchmark: `scripts/benchmark.py`.
 
 ## 5. Data and state
 
@@ -116,4 +128,5 @@ flowchart LR
 
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-07-27 | 0.2.0 | Core implementation: FastAPI proxy pipeline, LSH-indexed semantic cache with TTL eviction, rate limiter, guardrails (OWASP-tagged), cost/latency metrics, MCP routing, optional Langfuse tracing, React dashboard, and caching benchmark. Added scalability design (§4.7) and ADRs 0002–0004. | Vijay Ananth Karunanithi |
 | 2026-07-07 | 0.1.0 | Initial technical documentation (pre-implementation). | Vijay Ananth Karunanithi |

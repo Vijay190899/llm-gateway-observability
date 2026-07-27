@@ -8,10 +8,15 @@ dist/
 
 # Environments
 .venv/
+.venv-test/
 venv/
 .env
 .env.*
 !.env.example
+
+# Node / frontend
+node_modules/
+.vite/
 
 # uv
 .uv/
@@ -38,3 +43,7 @@ data/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Agent tooling (not part of the project)
+.claude/
+*.tsbuildinfo

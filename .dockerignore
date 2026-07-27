@@ -1,0 +1,13 @@
+.git
+.venv
+.venv-test
+frontend
+docs
+tests
+.github
+.pre-commit-config.yaml
+__pycache__
+*.pyc
+.pytest_cache
+DECISIONS.md
+# Note: README.md and LICENSE are kept — pyproject metadata references them.

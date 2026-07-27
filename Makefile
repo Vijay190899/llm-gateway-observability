@@ -1,4 +1,4 @@
-.PHONY: install lint format test run up down docker help
+.PHONY: install lint format test run up down bench frontend help
 
 help:
 	@echo "install  - create venv and install deps with uv"
@@ -6,7 +6,9 @@ help:
 	@echo "format   - ruff format"
 	@echo "test     - run pytest"
 	@echo "run      - start the gateway API only"
-	@echo "up       - start the full local stack (compose)"
+	@echo "bench    - run the caching benchmark against a running gateway"
+	@echo "frontend - run the dashboard dev server (Vite)"
+	@echo "up       - start the full local stack (gateway + Redis + dashboard)"
 	@echo "down     - stop the local stack"
 
 install:
@@ -24,6 +26,12 @@ test:
 
 run:
 	uv run uvicorn llmgateway.app:app --reload --port 8000
+
+bench:
+	uv run python scripts/benchmark.py
+
+frontend:
+	cd frontend && npm install && npm run dev
 
 up:
 	docker compose up --build

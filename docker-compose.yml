@@ -1,23 +1,44 @@
-# Local stack: gateway + Redis + Langfuse (+ its Postgres).
-# A mock LLM server gets added here as the gateway takes shape.
+# Local stack. Core services (redis, gateway, dashboard) come up with a plain
+# `docker compose up` and need no secrets — the gateway runs with an in-process
+# mock provider and local embedding. Add real provider keys via .env to route
+# real traffic. Langfuse tracing is optional, behind the `tracing` profile.
 
 services:
   gateway:
     build: .
+    # Multiple workers share one Redis (state is not in process memory), so the
+    # gateway scales across cores here and across replicas in Kubernetes.
+    command: uvicorn llmgateway.app:app --host 0.0.0.0 --port 8000 --workers 4
     ports:
       - "8000:8000"
-    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-http://langfuse:3000}
+      CACHE_SIMILARITY_THRESHOLD: ${CACHE_SIMILARITY_THRESHOLD:-0.95}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-60}
     depends_on:
       - redis
-      - langfuse
+
+  dashboard:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - gateway
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
 
+  # --- Optional: tracing (docker compose --profile tracing up) ---
   langfuse:
-    image: langfuse/langfuse:latest
+    image: langfuse/langfuse:2
+    profiles: ["tracing"]
     ports:
       - "3000:3000"
     environment:
@@ -30,6 +51,7 @@ services:
 
   langfuse-db:
     image: postgres:16-alpine
+    profiles: ["tracing"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

@@ -4,7 +4,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /app
 
-COPY pyproject.toml ./
+# README/LICENSE are referenced by pyproject metadata, so the build needs them.
+COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 RUN uv sync --no-dev
 
